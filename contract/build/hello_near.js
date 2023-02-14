@@ -351,6 +351,13 @@ var CurveType;
 
 const U64_MAX = 2n ** 64n - 1n;
 const EVICTED_REGISTER = U64_MAX - 1n;
+function predecessorAccountId() {
+  env.predecessor_account_id(0);
+  return env.read_register(0);
+}
+function attachedDeposit() {
+  return env.attached_deposit();
+}
 function storageRead(key) {
   let ret = env.storage_read(key, 0);
   if (ret === 1n) {
@@ -369,6 +376,10 @@ function storageHasKey(key) {
 }
 function storageGetEvicted() {
   return env.read_register(EVICTED_REGISTER);
+}
+function currentAccountId() {
+  env.current_account_id(0);
+  return env.read_register(0);
 }
 function input() {
   env.input(0);
@@ -391,6 +402,23 @@ function storageRemove(key) {
 
 function initialize({}) {
   return function (target, key, descriptor) {};
+}
+function call({
+  privateFunction = false,
+  payableFunction = false
+}) {
+  return function (target, key, descriptor) {
+    const originalMethod = descriptor.value;
+    descriptor.value = function (...args) {
+      if (privateFunction && predecessorAccountId() !== currentAccountId()) {
+        throw Error("Function is private");
+      }
+      if (!payableFunction && attachedDeposit() > BigInt(0)) {
+        throw Error("Function is not payable");
+      }
+      return originalMethod.apply(this, args);
+    };
+  };
 }
 function NearBindgen({
   requireInit = false
@@ -478,8 +506,14 @@ class LookupMap {
   }
 }
 
-var _dec, _dec2, _class, _class2;
-let NFTMinting = (_dec = NearBindgen({}), _dec2 = initialize({}), _dec(_class = (_class2 = class NFTMinting {
+var _dec, _dec2, _dec3, _class, _class2;
+class Token {
+  constructor(token_id, owner_id) {
+    this.token_id = token_id;
+    this.owner_id = owner_id;
+  }
+}
+let NFTMinting = (_dec = NearBindgen({}), _dec2 = initialize({}), _dec3 = call({}), _dec(_class = (_class2 = class NFTMinting {
   constructor() {
     this.owner_id = "";
     this.owner_by_id = new LookupMap("n");
@@ -493,7 +527,29 @@ let NFTMinting = (_dec = NearBindgen({}), _dec2 = initialize({}), _dec(_class = 
     this.owner_by_id = new LookupMap(prefix);
     this.token_id = 0;
   }
-}, (_applyDecoratedDescriptor(_class2.prototype, "init", [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, "init"), _class2.prototype)), _class2)) || _class);
+  mint_nft({
+    token_owner_id
+  }) {
+    this.owner_by_id.set(this.token_id.toString(), token_owner_id);
+    let token = new Token(this.token_id, token_owner_id);
+    this.token_id++;
+    return token;
+  }
+}, (_applyDecoratedDescriptor(_class2.prototype, "init", [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, "init"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "mint_nft", [_dec3], Object.getOwnPropertyDescriptor(_class2.prototype, "mint_nft"), _class2.prototype)), _class2)) || _class);
+function mint_nft() {
+  let _state = NFTMinting._getState();
+  if (!_state && NFTMinting._requireInit()) {
+    throw new Error("Contract must be initialized");
+  }
+  let _contract = NFTMinting._create();
+  if (_state) {
+    NFTMinting._reconstruct(_contract, _state);
+  }
+  let _args = NFTMinting._getArgs();
+  let _result = _contract.mint_nft(_args);
+  NFTMinting._saveToStorage(_contract);
+  if (_result !== undefined) if (_result && _result.constructor && _result.constructor.name === "NearPromise") _result.onReturn();else env.value_return(NFTMinting._serialize(_result));
+}
 function init() {
   let _state = NFTMinting._getState();
   if (_state) throw new Error("Contract already initialized");
@@ -504,5 +560,5 @@ function init() {
   if (_result !== undefined) if (_result && _result.constructor && _result.constructor.name === "NearPromise") _result.onReturn();else env.value_return(NFTMinting._serialize(_result));
 }
 
-export { init };
+export { init, mint_nft };
 //# sourceMappingURL=hello_near.js.map
