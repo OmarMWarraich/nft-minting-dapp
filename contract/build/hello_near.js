@@ -420,6 +420,9 @@ function call({
     };
   };
 }
+function view({}) {
+  return function (target, key, descriptor) {};
+}
 function NearBindgen({
   requireInit = false
 }) {
@@ -506,14 +509,14 @@ class LookupMap {
   }
 }
 
-var _dec, _dec2, _dec3, _class, _class2;
+var _dec, _dec2, _dec3, _dec4, _class, _class2;
 class Token {
   constructor(token_id, owner_id) {
     this.token_id = token_id;
     this.owner_id = owner_id;
   }
 }
-let NFTMinting = (_dec = NearBindgen({}), _dec2 = initialize({}), _dec3 = call({}), _dec(_class = (_class2 = class NFTMinting {
+let NFTMinting = (_dec = NearBindgen({}), _dec2 = initialize({}), _dec3 = call({}), _dec4 = view({}), _dec(_class = (_class2 = class NFTMinting {
   constructor() {
     this.owner_id = "";
     this.owner_by_id = new LookupMap("n");
@@ -535,7 +538,30 @@ let NFTMinting = (_dec = NearBindgen({}), _dec2 = initialize({}), _dec3 = call({
     this.token_id++;
     return token;
   }
-}, (_applyDecoratedDescriptor(_class2.prototype, "init", [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, "init"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "mint_nft", [_dec3], Object.getOwnPropertyDescriptor(_class2.prototype, "mint_nft"), _class2.prototype)), _class2)) || _class);
+  get_token_owner({
+    token_id
+  }) {
+    let owner_id = this.owner_by_id.get(token_id.toString());
+    if (owner_id == null) {
+      return "";
+    }
+    let token = new Token(token_id, owner_id.toString());
+    return token;
+  }
+}, (_applyDecoratedDescriptor(_class2.prototype, "init", [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, "init"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "mint_nft", [_dec3], Object.getOwnPropertyDescriptor(_class2.prototype, "mint_nft"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "get_token_owner", [_dec4], Object.getOwnPropertyDescriptor(_class2.prototype, "get_token_owner"), _class2.prototype)), _class2)) || _class);
+function get_token_owner() {
+  let _state = NFTMinting._getState();
+  if (!_state && NFTMinting._requireInit()) {
+    throw new Error("Contract must be initialized");
+  }
+  let _contract = NFTMinting._create();
+  if (_state) {
+    NFTMinting._reconstruct(_contract, _state);
+  }
+  let _args = NFTMinting._getArgs();
+  let _result = _contract.get_token_owner(_args);
+  if (_result !== undefined) if (_result && _result.constructor && _result.constructor.name === "NearPromise") _result.onReturn();else env.value_return(NFTMinting._serialize(_result));
+}
 function mint_nft() {
   let _state = NFTMinting._getState();
   if (!_state && NFTMinting._requireInit()) {
@@ -560,5 +586,5 @@ function init() {
   if (_result !== undefined) if (_result && _result.constructor && _result.constructor.name === "NearPromise") _result.onReturn();else env.value_return(NFTMinting._serialize(_result));
 }
 
-export { init, mint_nft };
+export { get_token_owner, init, mint_nft };
 //# sourceMappingURL=hello_near.js.map
