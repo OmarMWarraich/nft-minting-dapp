@@ -509,14 +509,14 @@ class LookupMap {
   }
 }
 
-var _dec, _dec2, _dec3, _dec4, _class, _class2;
+var _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _class, _class2;
 class Token {
   constructor(token_id, owner_id) {
     this.token_id = token_id;
     this.owner_id = owner_id;
   }
 }
-let NFTMinting = (_dec = NearBindgen({}), _dec2 = initialize({}), _dec3 = call({}), _dec4 = view({}), _dec(_class = (_class2 = class NFTMinting {
+let NFTMinting = (_dec = NearBindgen({}), _dec2 = initialize({}), _dec3 = call({}), _dec4 = view({}), _dec5 = view({}), _dec6 = view({}), _dec(_class = (_class2 = class NFTMinting {
   constructor() {
     this.owner_id = "";
     this.owner_by_id = new LookupMap("n");
@@ -548,7 +548,45 @@ let NFTMinting = (_dec = NearBindgen({}), _dec2 = initialize({}), _dec3 = call({
     let token = new Token(token_id, owner_id.toString());
     return token;
   }
-}, (_applyDecoratedDescriptor(_class2.prototype, "init", [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, "init"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "mint_nft", [_dec3], Object.getOwnPropertyDescriptor(_class2.prototype, "mint_nft"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "get_token_owner", [_dec4], Object.getOwnPropertyDescriptor(_class2.prototype, "get_token_owner"), _class2.prototype)), _class2)) || _class);
+  get_total_tokens() {
+    return this.token_id;
+  }
+  get_all_tokens() {
+    let tokens = [];
+    for (let i = 0; i < this.token_id; i++) {
+      let owner_id = this.owner_by_id.get(i.toString());
+      let token = new Token(i, owner_id.toString());
+      tokens.push(token);
+    }
+    return tokens;
+  }
+}, (_applyDecoratedDescriptor(_class2.prototype, "init", [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, "init"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "mint_nft", [_dec3], Object.getOwnPropertyDescriptor(_class2.prototype, "mint_nft"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "get_token_owner", [_dec4], Object.getOwnPropertyDescriptor(_class2.prototype, "get_token_owner"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "get_total_tokens", [_dec5], Object.getOwnPropertyDescriptor(_class2.prototype, "get_total_tokens"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "get_all_tokens", [_dec6], Object.getOwnPropertyDescriptor(_class2.prototype, "get_all_tokens"), _class2.prototype)), _class2)) || _class);
+function get_all_tokens() {
+  let _state = NFTMinting._getState();
+  if (!_state && NFTMinting._requireInit()) {
+    throw new Error("Contract must be initialized");
+  }
+  let _contract = NFTMinting._create();
+  if (_state) {
+    NFTMinting._reconstruct(_contract, _state);
+  }
+  let _args = NFTMinting._getArgs();
+  let _result = _contract.get_all_tokens(_args);
+  if (_result !== undefined) if (_result && _result.constructor && _result.constructor.name === "NearPromise") _result.onReturn();else env.value_return(NFTMinting._serialize(_result));
+}
+function get_total_tokens() {
+  let _state = NFTMinting._getState();
+  if (!_state && NFTMinting._requireInit()) {
+    throw new Error("Contract must be initialized");
+  }
+  let _contract = NFTMinting._create();
+  if (_state) {
+    NFTMinting._reconstruct(_contract, _state);
+  }
+  let _args = NFTMinting._getArgs();
+  let _result = _contract.get_total_tokens(_args);
+  if (_result !== undefined) if (_result && _result.constructor && _result.constructor.name === "NearPromise") _result.onReturn();else env.value_return(NFTMinting._serialize(_result));
+}
 function get_token_owner() {
   let _state = NFTMinting._getState();
   if (!_state && NFTMinting._requireInit()) {
@@ -586,5 +624,5 @@ function init() {
   if (_result !== undefined) if (_result && _result.constructor && _result.constructor.name === "NearPromise") _result.onReturn();else env.value_return(NFTMinting._serialize(_result));
 }
 
-export { get_token_owner, init, mint_nft };
+export { get_all_tokens, get_token_owner, get_total_tokens, init, mint_nft };
 //# sourceMappingURL=hello_near.js.map

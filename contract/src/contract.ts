@@ -57,4 +57,23 @@ class NFTMinting {
     return token;
 
   }
+
+  @view({})
+  get_total_tokens() {
+    return this.token_id;
+  }
+
+  @view({})
+  get_all_tokens() {
+      
+      let tokens = [];
+  
+      for (let i = 0; i < this.token_id; i++) {
+        let owner_id = this.owner_by_id.get(i.toString());
+        let token = new Token(i, owner_id.toString());
+        tokens.push(token);
+      }
+  
+      return tokens;
+    }
 }
