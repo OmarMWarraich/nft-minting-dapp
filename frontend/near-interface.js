@@ -5,11 +5,11 @@ export class Contract{
     this.wallet = wallet;
   }
 
-  async getGreeting(){
-    return await this.wallet.viewMethod({method: 'get_greeting'});
+  async get_total_tokens(){
+    return await this.wallet.viewMethod({ method: 'get_total_tokens' });
   }
-  
-  async setGreeting(greeting){
-    return await this.wallet.callMethod({method: 'set_greeting', args:{message: greeting}});
+
+  async get_all_tokens(){
+    return await this.wallet.viewMethod({ method: 'get_all_tokens' });
   }
 }

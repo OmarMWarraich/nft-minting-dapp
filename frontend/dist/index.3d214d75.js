@@ -27185,9 +27185,15 @@ function App({ isSignedIn , contract , wallet  }) {
     _s();
     const [valueFromBlockchain, setValueFromBlockchain] = (0, _reactDefault.default).useState();
     const [uiPleaseWait, setUiPleaseWait] = (0, _reactDefault.default).useState(true);
-    // Get blockchian state once on component load
+    const [totalTokens, setTotalTokens] = (0, _reactDefault.default).useState(0);
+    const [allTokens, setAllTokens] = (0, _reactDefault.default).useState([]);
     (0, _reactDefault.default).useEffect(()=>{
-        contract.getGreeting().then(setValueFromBlockchain).catch(alert).finally(()=>{
+        contract.get_total_tokens().then(setTotalTokens).catch(alert).finally(()=>{
+            setUiPleaseWait(false);
+        });
+    }, []);
+    (0, _reactDefault.default).useEffect(()=>{
+        contract.get_all_tokens().then(setAllTokens).catch(alert).finally(()=>{
             setUiPleaseWait(false);
         });
     }, []);
@@ -27198,19 +27204,9 @@ function App({ isSignedIn , contract , wallet  }) {
         onClick: ()=>wallet.signIn()
     }, void 0, false, {
         fileName: "App.js",
-        lineNumber: 27,
+        lineNumber: 41,
         columnNumber: 12
     }, this);
-    function changeGreeting(e) {
-        e.preventDefault();
-        setUiPleaseWait(true);
-        const { greetingInput  } = e.target.elements;
-        contract.setGreeting(greetingInput.value).then(async ()=>{
-            return contract.getGreeting();
-        }).then(setValueFromBlockchain).finally(()=>{
-            setUiPleaseWait(false);
-        });
-    }
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _jsxDevRuntime.Fragment), {
         children: [
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _uiComponents.SignOutButton), {
@@ -27218,101 +27214,70 @@ function App({ isSignedIn , contract , wallet  }) {
                 onClick: ()=>wallet.signOut()
             }, void 0, false, {
                 fileName: "App.js",
-                lineNumber: 44,
+                lineNumber: 46,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("main", {
                 className: uiPleaseWait ? "please-wait" : "",
                 children: [
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h1", {
+                        children: "NFT Minting Dapp"
+                    }, void 0, false, {
+                        fileName: "App.js",
+                        lineNumber: 48,
+                        columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h2", {
                         children: [
-                            "The contract says: ",
-                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                className: "greeting",
-                                children: valueFromBlockchain
-                            }, void 0, false, {
-                                fileName: "App.js",
-                                lineNumber: 47,
-                                columnNumber: 30
-                            }, this)
+                            "Number of Total NFT Tokens Minted: ",
+                            totalTokens
                         ]
                     }, void 0, true, {
                         fileName: "App.js",
-                        lineNumber: 46,
+                        lineNumber: 52,
                         columnNumber: 9
                     }, this),
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("form", {
-                        onSubmit: changeGreeting,
-                        className: "change",
-                        children: [
-                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
-                                children: "Change greeting:"
-                            }, void 0, false, {
-                                fileName: "App.js",
-                                lineNumber: 50,
-                                columnNumber: 11
-                            }, this),
-                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                children: [
-                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
-                                        autoComplete: "off",
-                                        defaultValue: valueFromBlockchain,
-                                        id: "greetingInput"
-                                    }, void 0, false, {
-                                        fileName: "App.js",
-                                        lineNumber: 52,
-                                        columnNumber: 13
-                                    }, this),
-                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
-                                        children: [
-                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                children: "Save"
-                                            }, void 0, false, {
-                                                fileName: "App.js",
-                                                lineNumber: 58,
-                                                columnNumber: 15
-                                            }, this),
-                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                                className: "loader"
-                                            }, void 0, false, {
-                                                fileName: "App.js",
-                                                lineNumber: 59,
-                                                columnNumber: 15
-                                            }, this)
-                                        ]
-                                    }, void 0, true, {
-                                        fileName: "App.js",
-                                        lineNumber: 57,
-                                        columnNumber: 13
-                                    }, this)
-                                ]
-                            }, void 0, true, {
-                                fileName: "App.js",
-                                lineNumber: 51,
-                                columnNumber: 11
-                            }, this)
-                        ]
-                    }, void 0, true, {
-                        fileName: "App.js",
-                        lineNumber: 49,
-                        columnNumber: 9
-                    }, this),
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _uiComponents.EducationalText), {}, void 0, false, {
-                        fileName: "App.js",
-                        lineNumber: 63,
-                        columnNumber: 9
-                    }, this)
+                    allTokens.map((token)=>{
+                        return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                            children: [
+                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h3", {
+                                    children: [
+                                        "Token ID: ",
+                                        token.token_id
+                                    ]
+                                }, void 0, true, {
+                                    fileName: "App.js",
+                                    lineNumber: 59,
+                                    columnNumber: 15
+                                }, this),
+                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                                    children: [
+                                        "Token Owner: ",
+                                        token.owner_id
+                                    ]
+                                }, void 0, true, {
+                                    fileName: "App.js",
+                                    lineNumber: 62,
+                                    columnNumber: 15
+                                }, this)
+                            ]
+                        }, token.token_id, true, {
+                            fileName: "App.js",
+                            lineNumber: 58,
+                            columnNumber: 13
+                        }, this);
+                    })
                 ]
             }, void 0, true, {
                 fileName: "App.js",
-                lineNumber: 45,
+                lineNumber: 47,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true);
 }
 exports.default = App;
-_s(App, "kS24ka7QLm9/xaObsbkZiE5+6uE=");
+_s(App, "2p6rGqyrtiLxohCKB3itwdv8pQA=");
 _c = App;
 var _c;
 $RefreshReg$(_c, "App");
@@ -27924,50 +27889,14 @@ parcelHelpers.export(exports, "EducationalText", ()=>EducationalText);
 var _jsxDevRuntime = require("react/jsx-dev-runtime");
 var _react = require("react");
 var _reactDefault = parcelHelpers.interopDefault(_react);
-function SignInPrompt({ greeting , onClick  }) {
+function SignInPrompt({ onClick  }) {
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("main", {
         children: [
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h1", {
-                children: [
-                    "The contract says: ",
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                        className: "greeting",
-                        children: greeting
-                    }, void 0, false, {
-                        fileName: "ui-components.js",
-                        lineNumber: 7,
-                        columnNumber: 28
-                    }, this)
-                ]
-            }, void 0, true, {
+                children: "Welcome to our NFT"
+            }, void 0, false, {
                 fileName: "ui-components.js",
                 lineNumber: 6,
-                columnNumber: 7
-            }, this),
-            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h3", {
-                children: "Welcome to NEAR!"
-            }, void 0, false, {
-                fileName: "ui-components.js",
-                lineNumber: 9,
-                columnNumber: 7
-            }, this),
-            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
-                children: "Your contract is storing a greeting message in the NEAR blockchain. To change it you need to sign in using the NEAR Wallet. It is very simple, just use the button below."
-            }, void 0, false, {
-                fileName: "ui-components.js",
-                lineNumber: 12,
-                columnNumber: 7
-            }, this),
-            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
-                children: 'Do not worry, this app runs in the test network ("testnet"). It works just like the main network ("mainnet"), but using NEAR Tokens that are only for testing!'
-            }, void 0, false, {
-                fileName: "ui-components.js",
-                lineNumber: 17,
-                columnNumber: 7
-            }, this),
-            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("br", {}, void 0, false, {
-                fileName: "ui-components.js",
-                lineNumber: 22,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -27979,12 +27908,12 @@ function SignInPrompt({ greeting , onClick  }) {
                     children: "Sign in with NEAR Wallet"
                 }, void 0, false, {
                     fileName: "ui-components.js",
-                    lineNumber: 24,
+                    lineNumber: 11,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "ui-components.js",
-                lineNumber: 23,
+                lineNumber: 10,
                 columnNumber: 7
             }, this)
         ]
@@ -28007,7 +27936,7 @@ function SignOutButton({ accountId , onClick  }) {
         ]
     }, void 0, true, {
         fileName: "ui-components.js",
-        lineNumber: 32,
+        lineNumber: 19,
         columnNumber: 5
     }, this);
 }
@@ -28019,7 +27948,7 @@ function EducationalText() {
                 children: "Look at that! A Hello World app! This greeting is stored on the NEAR blockchain. Check it out:"
             }, void 0, false, {
                 fileName: "ui-components.js",
-                lineNumber: 41,
+                lineNumber: 28,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("ol", {
@@ -28031,7 +27960,7 @@ function EducationalText() {
                                 children: "frontend/App.js"
                             }, void 0, false, {
                                 fileName: "ui-components.js",
-                                lineNumber: 46,
+                                lineNumber: 33,
                                 columnNumber: 19
                             }, this),
                             " - you'll see ",
@@ -28039,7 +27968,7 @@ function EducationalText() {
                                 children: "getGreeting"
                             }, void 0, false, {
                                 fileName: "ui-components.js",
-                                lineNumber: 46,
+                                lineNumber: 33,
                                 columnNumber: 61
                             }, this),
                             " and ",
@@ -28047,7 +27976,7 @@ function EducationalText() {
                                 children: "setGreeting"
                             }, void 0, false, {
                                 fileName: "ui-components.js",
-                                lineNumber: 46,
+                                lineNumber: 33,
                                 columnNumber: 90
                             }, this),
                             " being called on ",
@@ -28055,14 +27984,14 @@ function EducationalText() {
                                 children: "contract"
                             }, void 0, false, {
                                 fileName: "ui-components.js",
-                                lineNumber: 46,
+                                lineNumber: 33,
                                 columnNumber: 131
                             }, this),
                             ". What's this?"
                         ]
                     }, void 0, true, {
                         fileName: "ui-components.js",
-                        lineNumber: 45,
+                        lineNumber: 32,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("li", {
@@ -28072,7 +28001,7 @@ function EducationalText() {
                                 children: "contract"
                             }, void 0, false, {
                                 fileName: "ui-components.js",
-                                lineNumber: 49,
+                                lineNumber: 36,
                                 columnNumber: 28
                             }, this),
                             " code is defined in ",
@@ -28080,7 +28009,7 @@ function EducationalText() {
                                 children: "./contract"
                             }, void 0, false, {
                                 fileName: "ui-components.js",
-                                lineNumber: 49,
+                                lineNumber: 36,
                                 columnNumber: 69
                             }, this),
                             " – this is the source code for your ",
@@ -28091,14 +28020,14 @@ function EducationalText() {
                                 children: "smart contract"
                             }, void 0, false, {
                                 fileName: "ui-components.js",
-                                lineNumber: 49,
+                                lineNumber: 36,
                                 columnNumber: 128
                             }, this),
                             "."
                         ]
                     }, void 0, true, {
                         fileName: "ui-components.js",
-                        lineNumber: 48,
+                        lineNumber: 35,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("li", {
@@ -28108,7 +28037,7 @@ function EducationalText() {
                                 children: "npm run deploy"
                             }, void 0, false, {
                                 fileName: "ui-components.js",
-                                lineNumber: 51,
+                                lineNumber: 38,
                                 columnNumber: 24
                             }, this),
                             ", the code in ",
@@ -28116,7 +28045,7 @@ function EducationalText() {
                                 children: "./contract"
                             }, void 0, false, {
                                 fileName: "ui-components.js",
-                                lineNumber: 51,
+                                lineNumber: 38,
                                 columnNumber: 65
                             }, this),
                             " gets deployed to the NEAR testnet. You can see how this happens by looking in ",
@@ -28124,25 +28053,25 @@ function EducationalText() {
                                 children: "package.json"
                             }, void 0, false, {
                                 fileName: "ui-components.js",
-                                lineNumber: 51,
+                                lineNumber: 38,
                                 columnNumber: 167
                             }, this),
                             "."
                         ]
                     }, void 0, true, {
                         fileName: "ui-components.js",
-                        lineNumber: 50,
+                        lineNumber: 37,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "ui-components.js",
-                lineNumber: 44,
+                lineNumber: 31,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("hr", {}, void 0, false, {
                 fileName: "ui-components.js",
-                lineNumber: 53,
+                lineNumber: 40,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -28155,7 +28084,7 @@ function EducationalText() {
                         children: "the NEAR docs"
                     }, void 0, false, {
                         fileName: "ui-components.js",
-                        lineNumber: 55,
+                        lineNumber: 42,
                         columnNumber: 37
                     }, this),
                     " or look through some ",
@@ -28166,14 +28095,14 @@ function EducationalText() {
                         children: "example apps"
                     }, void 0, false, {
                         fileName: "ui-components.js",
-                        lineNumber: 55,
+                        lineNumber: 42,
                         columnNumber: 141
                     }, this),
                     "."
                 ]
             }, void 0, true, {
                 fileName: "ui-components.js",
-                lineNumber: 54,
+                lineNumber: 41,
                 columnNumber: 7
             }, this)
         ]
@@ -71119,17 +71048,14 @@ class Contract {
     constructor({ wallet  }){
         this.wallet = wallet;
     }
-    async getGreeting() {
+    async get_total_tokens() {
         return await this.wallet.viewMethod({
-            method: "get_greeting"
+            method: "get_total_tokens"
         });
     }
-    async setGreeting(greeting) {
-        return await this.wallet.callMethod({
-            method: "set_greeting",
-            args: {
-                message: greeting
-            }
+    async get_all_tokens() {
+        return await this.wallet.viewMethod({
+            method: "get_all_tokens"
         });
     }
 }
