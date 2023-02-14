@@ -1,0 +1,1 @@
+DEFINE_NEAR_METHOD(init)
